@@ -107,29 +107,29 @@ jobClearBtnLoc.addEventListener("click", (e) => {
     searchBtn.click();
 })
 
-const removePaddingBottomToFilterList = (filterList) => {
-    filterList.closest(".element").style.paddingBottom = "";
-    filterList.closest(".element").style.boxShadow = "";
-    filterList.closest(".element").style.height = ""
-}
+// const removePaddingBottomToFilterList = (filterList) => {
+//     filterList.closest(".element").style.paddingBottom = "";
+//     filterList.closest(".element").style.boxShadow = "";
+//     filterList.closest(".element").style.height = ""
+// }
 
-const addPaddingBottomToFilterList = (filterList) => {
-    if (filterList.closest(".element").style.paddingBottom === "" ) {
-        const listCount = Array.from(document.querySelector(".list").querySelectorAll("ul")).reduce((count, ul) => count + ul.querySelectorAll("li").length, 0);
-        const liStyle = getComputedStyle(document.querySelector(".list ul li"));
-        const liStyleMarginBottom = parseInt(liStyle.marginBottom.split(0,-2));
-        const liStyleHeight = document.querySelector(".list ul li").offsetHeight;
-        const titleHeight = document.querySelector(".list-title").offsetHeight;
-        const totalCount = (listCount * (liStyleMarginBottom + liStyleHeight)) + titleHeight + (liStyleMarginBottom * 2);
-        const listHeight = totalCount > 400 ? 400 : totalCount;
+// const addPaddingBottomToFilterList = (filterList) => {
+//     if (filterList.closest(".element").style.paddingBottom === "" ) {
+//         const listCount = Array.from(document.querySelector(".list").querySelectorAll("ul")).reduce((count, ul) => count + ul.querySelectorAll("li").length, 0);
+//         const liStyle = getComputedStyle(document.querySelector(".list ul li"));
+//         const liStyleMarginBottom = parseInt(liStyle.marginBottom.split(0,-2));
+//         const liStyleHeight = document.querySelector(".list ul li").offsetHeight;
+//         const titleHeight = document.querySelector(".list-title").offsetHeight;
+//         const totalCount = (listCount * (liStyleMarginBottom + liStyleHeight)) + titleHeight + (liStyleMarginBottom * 2);
+//         const listHeight = totalCount > 400 ? 400 : totalCount;
         
-        filterList.closest(".element").style.paddingBottom = "15px";
-        filterList.closest(".element").style.boxShadow = "0px 0px 3px rgba(0,0,0,0.1)";
-        filterList.closest(".element").style.height = listHeight +"px";
-    } else {
-        removePaddingBottomToFilterList(filterList);
-    }
-}
+//         filterList.closest(".element").style.paddingBottom = "15px";
+//         filterList.closest(".element").style.boxShadow = "0px 0px 3px rgba(0,0,0,0.1)";
+//         filterList.closest(".element").style.height = listHeight +"px";
+//     } else {
+//         removePaddingBottomToFilterList(filterList);
+//     }
+// }
 
 const dropDownListArray = [cityLoc, distanceLoc, sectorLoc, employmentFormLoc, workingHoursLoc, languageLoc]
 
@@ -137,7 +137,7 @@ dropDownListArray.forEach((elem) => {
     elem.querySelector(".list-title").addEventListener("click", () => {
         elem.querySelector(".list").classList.toggle("expand");
         elem.querySelector(".arrow-down").classList.toggle("rotate180");
-        addPaddingBottomToFilterList(elem.querySelector(".list-title"));
+        // addPaddingBottomToFilterList(elem.querySelector(".list-title"));
     })
 })
 
@@ -145,26 +145,26 @@ dropDownListArray.forEach((elem) => {
     elem.addEventListener("mouseleave", () => {
         elem.querySelector(".list").classList.remove("expand");
         elem.querySelector(".arrow-down").classList.remove("rotate180");
-        removePaddingBottomToFilterList(elem.querySelector(".list-title"));
+        // removePaddingBottomToFilterList(elem.querySelector(".list-title"));
     })
 })
 
-document.addEventListener("touchstart", function (event) {
-    const target = event.target;
-    const isTargetInArray = dropDownListArray.some(selector => {
-        let expand = selector.querySelector('.expand');
+// document.addEventListener("touchstart", function (event) {
+//     const target = event.target;
+//     const isTargetInArray = dropDownListArray.some(selector => {
+//         let expand = selector.querySelector('.expand');
 
-        return selector.contains(expand) && !selector.contains(event.target);
-      });
+//         return selector.contains(expand) && !selector.contains(event.target);
+//       });
   
-    if (isTargetInArray) {
-        dropDownListArray.forEach((elem) => {
-            elem.querySelector(".list").classList.remove("expand");
-            elem.querySelector(".arrow-down").classList.remove("rotate180");
-            removePaddingBottomToFilterList(elem.querySelector(".list-title"));
-        });
-    }
-})
+//     if (isTargetInArray) {
+//         dropDownListArray.forEach((elem) => {
+//             elem.querySelector(".list").classList.remove("expand");
+//             elem.querySelector(".arrow-down").classList.remove("rotate180");
+//             removePaddingBottomToFilterList(elem.querySelector(".list-title"));
+//         });
+//     }
+// })
 
 let filterConfigData = {};
 let apiPage = 1;
@@ -246,18 +246,12 @@ const actionAfterFilterInputChange = (e) => {
    
     const indexFilter = filterListLocArray.indexOf(filterParentLoc);
 
-    console.log(indexFilter)
-
     if (e.target.checked) {
-        console.log(selectedOptionsInFilterArray)
-        console.log(selectedOptionsInFilterArray[indexFilter])
         selectedOptionsInFilterArray[indexFilter].push(e.target.name);
     } else {
         const indexDeletedItem = selectedOptionsInFilterArray[indexFilter].indexOf(e.target.id);
         selectedOptionsInFilterArray[indexFilter].splice(indexDeletedItem,1);
     }
-
-    console.log(selectedOptionsInFilterArray)
 
     if (selectedOptionsInFilterArray[indexFilter].length !== 0) {
         filtersListTitleLoc.classList.add("mini");
@@ -463,14 +457,30 @@ const createFilteredRecordsArray = () => {
 
     if (Object.keys(filterConfigData).length !== 0 && filterConfigData.branche_filter.length) {
         selectedBranches = filterConfigData.branche_filter;
+
+        let selectedBranchesOnList = Array.from(branchesChildrenLoc).filter(function (elem) {
+            return elem.checked
+        })
+
+        if (selectedBranchesOnList.length > 0) {
+
+            selectedBranches = Array.from(branchesChildrenLoc)
+            .filter(function (elem) {
+                return elem.checked
+            })
+            .map(function (elem) {
+                return elem.id
+            })
+        }
+
     } else {
         selectedBranches = Array.from(branchesChildrenLoc)
             .filter(function (elem) {
-                return elem.checked;
+                return elem.checked
             })
             .map(function (elem) {
-                return elem.id;
-            });
+                return elem.id
+            })
     }
     
     let filteredRecordsArray_1 = [];
@@ -560,6 +570,25 @@ const createFilteredRecordsArray = () => {
 
     if (Object.keys(filterConfigData).length !== 0 && filterConfigData.language_filter.length) {
         selectedLangs = filterConfigData.language_filter
+
+
+        let selectedLangsOnList = Array.from(langChildrenLoc).filter(function (elem) {
+            if (elem.value) {
+                return elem.checked
+            }
+        })
+
+        if (selectedLangsOnList.length > 0) {
+
+            selectedLangs = Array.from(langChildrenLoc)
+            .filter(function (elem) {
+                return elem.checked
+            })
+            .map(function (elem) {
+                return elem.value
+            })
+        }
+
     } else {
         selectedLangs = Array.from(langChildrenLoc)
             .filter(function (elem) {
@@ -622,15 +651,33 @@ const createFilteredRecordsArray = () => {
 
     if (Object.keys(filterConfigData).length !== 0 && filterConfigData.location_city_filter.length) {
         selectedCity = filterConfigData.location_city_filter
-        cityLoc.style.display = "none"
-    } else {
+        // cityLoc.style.display = "none"
 
-        console.log(citiesChildrenLoc)
-        console.log(Array.from(citiesChildrenLoc))
+        let selectedCityOnList = Array.from(citiesChildrenLoc).filter(function (elem) {
+            if (elem.value) {
+                return elem.checked
+            }
+        })
+
+        if (selectedCityOnList.length > 0) {
+
+            selectedCity = Array.from(citiesChildrenLoc)
+            .filter(function (elem) {
+                if (elem.value) {
+                    return elem.checked
+                }
+            })
+            .map(function (elem) {
+                if (elem.value) {
+                    return [elem.value, elem.dataset.county]
+                }
+            })
+        }
+
+    } else {
         selectedCity = Array.from(citiesChildrenLoc)
         .filter(function (elem) {
             if (elem.value) {
-                console.log(elem.value, elem.checked)
                 return elem.checked
             }
         })
@@ -639,8 +686,6 @@ const createFilteredRecordsArray = () => {
                 return [elem.value, elem.dataset.county]
             }
         })
-
-        console.log(selectedCity)
     }
     
     let filteredRecordsArray_7 = []
@@ -661,12 +706,16 @@ const createFilteredRecordsArray = () => {
         let max_longi
 
         selectedCity.forEach((el_city) => {
+
+            min_lati = 0
+            max_lati = 0
+            min_longi = 0
+            max_longi = 0
+
             filteredRecordsArray_6.forEach((el_record) => {
                 
                 if (el_city[1] !== "") {
-                    console.log(el_city[1])
                     if (el_city[0] === el_record.city && el_city[1] === el_record.county) {
-                        console.log(el_record.county)
                         lati = el_record.lati
                         longi = el_record.longi
                         if (Object.keys(filterConfigData).length !== 0 && filterConfigData.location_distance !== null) {
@@ -680,7 +729,6 @@ const createFilteredRecordsArray = () => {
                     }
                 } else {
                     if (el_city[0] === el_record.city) {
-                        console.log(el_city[0])
                         lati = el_record.lati
                         longi = el_record.longi
                         if (Object.keys(filterConfigData).length !== 0 && filterConfigData.location_distance !== null) {
@@ -693,9 +741,7 @@ const createFilteredRecordsArray = () => {
                         max_longi = longi + (selectedDistance * 0.0089831) / Math.cos((lati * Math.PI) / 180)
                     }
                 }
-            })
 
-            filteredRecordsArray_6.forEach((el_record) => {
                 if (
                     el_record.lati <= max_lati &&
                     el_record.lati >= min_lati &&
@@ -957,35 +1003,22 @@ const createFilterLists = (filterConfigData) => {
     if (Object.keys(filterCountriesList).length > 0) {
 
         function compare(a, b) {
-            return a.city.localeCompare(b.city);
+            return a.cityCountyArray[0].localeCompare(b.cityCountyArray[0]);
         }
 
         for (let key in filterCountriesList) {
             filterCountriesList[key].sort(compare);
-        }
-
-        filterCountriesList = Object.keys(filterCountriesList)
-            .sort()
-            .reduce((accumulator, key) => {
-                accumulator[key] = filterCountriesList[key];
-                return accumulator;
-            }, {});
-
-            console.log(filterCountriesList)
+        } 
 
         let allCitiesObj = [];
         for (let key in filterCountriesList) {
             allCitiesObj = allCitiesObj.concat(filterCountriesList[key]);
         }
 
-         console.log(allCitiesObj)
-
         let allCitiesArray = [];
         allCitiesObj.forEach((el) => {
-            allCitiesArray.push([el.city, el.county]);
-        });
-
-        console.log(allCitiesArray)
+            allCitiesArray.push(el.cityCountyArray);
+        })
 
         allCitiesArray.forEach((elem, index) => {
             let duplicateExist = false
@@ -998,9 +1031,7 @@ const createFilterLists = (filterConfigData) => {
                 allCitiesArray[index][1] = ""
             }
         })
-       
-        console.log(allCitiesArray)
-
+    
         allCitiesArray.sort(function ([a], [b]) {
             return a[0].localeCompare(b[0]);
         });
@@ -1042,7 +1073,6 @@ const changePage = (pageBtn) => {
         : createRecordBoxes(allRecordsArray, firstRecord, lastRecord);
     globActivePageNo = parseInt(pageBtn.innerText);
 
-    
     // setParentIframeHeight()
 };
 
@@ -1447,6 +1477,7 @@ const createAwardedRecordBoxes = (recordsArray, filterConfigData) => {
 // }
 
 // create FILTER DATA from API data ///////////////////////////////////////////////
+
 const createDataForFilters = (
     branche,
     jobForm,
@@ -1456,8 +1487,7 @@ const createDataForFilters = (
     salaryFrom,
     salaryTo,
     country,
-    city,
-    county,
+    cityCountyArray,
     lati,
     longi
     ) => {
@@ -1508,66 +1538,109 @@ const createDataForFilters = (
 
     // CountriesList
 
-    // console.log(filterCountriesList)
+    let itemFilterExists = false
 
     if (Object.keys(filterConfigData).length !== 0) {
         if (!filterCountriesList[country]) {
             filterCountriesList[country] = []
         }
-        if (filterConfigData.location_city_filter.length) {
-            if (filterConfigData.location_city_filter.indexOf(city) !== -1) {
-                if (filterCountriesList[country].findIndex((arr_el) => arr_el.city === city && arr_el.county === county) === -1) { // wczesniej tu było bez tego warunku
-                    filterCountriesList[country].push({
-                        city: city,
-                        county: county,
-                        lati: lati,
-                        longi: longi,
-                    });
+
+        if (filterConfigData.location_city_filter.length) { // gdy w config jest city filter wypełnione
+            for (let i=0; i<filterConfigData.location_city_filter.length; i++) {
+                if (filterConfigData.location_city_filter[i][1] !== "") {
+                    if (filterConfigData.location_city_filter[i][0] === cityCountyArray[0] && filterConfigData.location_city_filter[i][1] === cityCountyArray[1]) {
+                        for (let k=0; k<filterCountriesList[country].length; k++) {
+                            if (filterCountriesList[country][k]["cityCountyArray"][0] === cityCountyArray[0] && filterCountriesList[country][k]["cityCountyArray"][1] === cityCountyArray[1]) {
+                                itemFilterExists = true
+                                break
+                            }
+                        }
+                        if (!itemFilterExists) {
+                            filterCountriesList[country].push({
+                                cityCountyArray: cityCountyArray,
+                                lati: lati,
+                                longi: longi,
+                            });
+                        }
+                    }
+                } else {
+                    if (filterConfigData.location_city_filter[i][0] === cityCountyArray[0]) {
+                        for (let k=0; k<filterCountriesList[country].length; k++) {
+                            if (filterCountriesList[country][k]["cityCountyArray"][0] === cityCountyArray[0]) {
+                                itemFilterExists = true
+                                break
+                            }
+                        }
+                        if (!itemFilterExists) {
+                            filterCountriesList[country].push({
+                                cityCountyArray: cityCountyArray,
+                                lati: lati,
+                                longi: longi,
+                            });
+                        }
+                    }
                 }
             }
-        } else if (filterConfigData.location_country_filter.length) {
-            if (filterConfigData.location_country_filter.indexOf(country) !== -1) {
-                if (filterCountriesList[country].findIndex((arr_el) => arr_el.city === city && arr_el.county === county) === -1) { // wczesniej tu było bez tego warunkus
-                    filterCountriesList[country].push({
-                        city: city,
-                        county: county,
-                        lati: lati,
-                        longi: longi,
-                    });
+        } else if (filterConfigData.location_country_filter.length) { // gdy w config jest country filter wypełnione
+            for (let i=0; i<filterConfigData.location_country_filter.length; i++) {
+                if (filterConfigData.location_country_filter.indexOf(country) !== -1) {
+                    for (let k=0; k<filterCountriesList[country].length; k++) {
+                        if (filterCountriesList[country][k]["cityCountyArray"][0] === cityCountyArray[0] && filterCountriesList[country][k]["cityCountyArray"][1] === cityCountyArray[1]) {
+                            itemFilterExists = true
+                            break
+                        }
+                    }
+                    if (!itemFilterExists) {
+                        filterCountriesList[country].push({
+                            cityCountyArray: cityCountyArray,
+                            lati: lati,
+                            longi: longi,
+                        });
+                    }
                 }
             }
-        } else {
-            if (filterCountriesList[country].findIndex((arr_el) => arr_el.city === city && arr_el.county === county) === -1) {
+        } else { // jezeli w pliku config nie ma ustawionego filtra: location_country_filter ani location_city_filter
+
+            for (let k=0; k<filterCountriesList[country].length; k++) {
+                if (filterCountriesList[country][k]["cityCountyArray"][0] === cityCountyArray[0] && filterCountriesList[country][k]["cityCountyArray"][1] === cityCountyArray[1]) {
+                    itemFilterExists = true
+                    break
+                }
+            }
+            
+            if (!itemFilterExists) {
                 filterCountriesList[country].push({
-                    city: city,
-                    county: county,
+                    cityCountyArray: cityCountyArray,
                     lati: lati,
                     longi: longi,
                 });
             }
         }
-    } else {
+    } else { // jeżeli nie ma pliku config.json
+
         if (!filterCountriesList[country]) {
             filterCountriesList[country] = []
         }
-        if (filterCountriesList[country].findIndex((arr_el) => arr_el.city === city && arr_el.county === county) === -1) {
+
+        for (let k=0; k<filterCountriesList[country].length; k++) {
+            if (filterCountriesList[country][k]["cityCountyArray"][0] === cityCountyArray[0] && filterCountriesList[country][k]["cityCountyArray"][1] === cityCountyArray[1]) {
+                itemFilterExists = true
+                break
+            }
+        }
+        
+        if (!itemFilterExists) {
             filterCountriesList[country].push({
-                city: city,
-                county: county,
+                cityCountyArray: cityCountyArray,
                 lati: lati,
                 longi: longi,
             });
         }
     }
-
-    // console.log(filterCountriesList)
 }
 
 // create OBJECTS ARRAY from Raw API JSON ///////////////////////////////////////////////
 const reworkData = (rawAPIArray) => {
-
-    console.log(rawAPIArray)
-    console.log(allRecordsArray)
 
     rawAPIArray.forEach((el) => {
 
@@ -1598,30 +1671,74 @@ const reworkData = (rawAPIArray) => {
             awarded: el.awarded,
         });
 
-        createDataForFilters(
-            el.options.branches,
-            el.options._forma_zatrudnienia,
-            el.options.job_type,
-            el.advert.language,
-            parseInt(el.options._Widoczna_stawka),
-            parseInt(el.options._spodziewane_wynagrodzenie_od),
-            parseInt(el.options._spodziewane_wynagrodzenie_do),
-            parsedJobLocation.country,
-            parsedJobLocation.locality,
-            parsedJobLocation.region2,
-            parseFloat(parsedJobLocation.latitude),
-            parseFloat(parsedJobLocation.longitude)
-        );
-    });
+        let filtersFlag = true
 
-    console.log(allRecordsArray)
+        if (filterConfigData.branche_filter.length && filtersFlag) {
+            filtersFlag = false
+            filterConfigData.branche_filter.forEach((elem1) => {
+                if (el.options.branches === elem1) {
+                    filtersFlag = true
+                }
+            })
+        }
+
+        if (filterConfigData.language_filter.length && filtersFlag) {
+            filtersFlag = false
+            filterConfigData.language_filter.forEach((elem2) => {
+                if (el.advert.language === elem2) {
+                    filtersFlag = true
+                }
+            })
+        }
+
+        if (filterConfigData.location_country_filter.length && filtersFlag) {
+            filtersFlag = false
+            filterConfigData.location_country_filter.forEach((elem3) => {
+                if (parsedJobLocation.country === elem3) {
+                    filtersFlag = true
+                }
+            })
+        }
+
+        if (filterConfigData.location_city_filter.length && filtersFlag) {
+            filtersFlag = false
+            filterConfigData.location_city_filter.forEach((elem4) => {
+                if (parsedJobLocation.locality === elem4[0]) {
+                    if (elem4[1] !== "") {
+                        if (parsedJobLocation.region2 === elem4[1]) {
+                            filtersFlag = true
+                        }
+                    } else {
+                        filtersFlag = true
+                    }
+                }
+            })
+        }
+
+        if (filtersFlag === true) {
+       
+            createDataForFilters(
+                el.options.branches,
+                el.options._forma_zatrudnienia,
+                el.options.job_type,
+                el.advert.language,
+                parseInt(el.options._Widoczna_stawka),
+                parseInt(el.options._spodziewane_wynagrodzenie_od),
+                parseInt(el.options._spodziewane_wynagrodzenie_do),
+                parsedJobLocation.country,
+                [parsedJobLocation.locality, parsedJobLocation.region2],
+                parseFloat(parsedJobLocation.latitude),
+                parseFloat(parsedJobLocation.longitude)
+            )
+        }
+    })
 }
 
 // gets DATA FROM API ///////////////////////////////////////////////
 const getAPI = (apiPage) => {
     const response = fetch(
-        // "https://grupaprogres.traffit.com/public/job_posts/published", tymczasowo
-        "./config/response.json",
+        "https://grupaprogres.traffit.com/public/job_posts/published",
+        // "./config/response.json",
         {
             mode: "cors",
             headers: {
@@ -1658,15 +1775,15 @@ const loopOnAPI = (jsonData, filterConfigData) => {
     if (jsonData.length > 0 && apiNumber === 1) {
         rawAPIArray = rawAPIArray.concat(jsonData)
         apiPage++
-        // createRecordsObjFromAPI(apiPage, filterConfigData)
-    // } else if (jsonData.length === 0  && apiNumber === 1) {
-    //     apiPage = 1
-    //     createRecordsObjFromAPI_2(apiPage, filterConfigData)
-    // } else if (jsonData.length > 0  && apiNumber === 2) {
-    //     rawAPIArray = rawAPIArray.concat(jsonData)
-    //     apiPage++
-    //     createRecordsObjFromAPI_2(apiPage, filterConfigData)
-    // } else {
+        createRecordsObjFromAPI(apiPage, filterConfigData)
+    } else if (jsonData.length === 0  && apiNumber === 1) {
+        apiPage = 1
+        createRecordsObjFromAPI_2(apiPage, filterConfigData)
+    } else if (jsonData.length > 0  && apiNumber === 2) {
+        rawAPIArray = rawAPIArray.concat(jsonData)
+        apiPage++
+        createRecordsObjFromAPI_2(apiPage, filterConfigData)
+    } else {
         reworkData(rawAPIArray)
         recordsNumber = rawAPIArray.length
         createAwardedRecordBoxes(allRecordsArray, filterConfigData)
@@ -1685,7 +1802,6 @@ async function createRecordsObjFromAPI(apiPage, filterConfigData) {
     apiNumber = 1
     const rawData = await getAPI(apiPage)
     const jsonData = await rawData.json()
-    console.log("json1", jsonData)
     loopOnAPI(jsonData, filterConfigData)
 }
 
@@ -1693,7 +1809,6 @@ async function createRecordsObjFromAPI_2(apiPage, filterConfigData) {
     apiNumber = 2
     const rawData = await getAPI_2(apiPage)
     const jsonData = await rawData.json()
-    console.log("json2", jsonData)
     loopOnAPI(jsonData, filterConfigData)
 }
 
@@ -1798,10 +1913,6 @@ remoteInputLoc.addEventListener("change", () => {
 relocationInputLoc.addEventListener("change", () => {
     searchBtn.click();
 })
-
-
-
-
 
 // LANGUAGES
 
