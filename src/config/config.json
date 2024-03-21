@@ -9,9 +9,25 @@
         "Opakowania i Druk",
         "Magazyn"
     ],
-    "language_filter": [],
+    "language_filter": [
+        "ru",
+        "pl"
+    ],
     "location_country_filter": [],
-    "location_city_filter": [],
+    "location_city_filter": [
+        [
+            "Żółtki",
+            "Białostocki"
+        ],
+        [
+            "Sosnowiec",
+            "Sosnowiec"
+        ],
+        [
+            "Warszawa",
+            ""
+        ]
+    ],
     "location_distance": null,
     "recruitmentType_filter": [],
     "recruitmentType_colorOnly": [],
